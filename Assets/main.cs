@@ -24,7 +24,7 @@ public class main : MonoBehaviour
         List<Tile> value5Cell = new List<Tile>();
         Action<int, int, Tile> finder = (x, y, t) =>
         {
-            if (t.value == 5) value5Cell.Add(new Tile(x, y, t.value));
+            if (t.index == 5) value5Cell.Add(new Tile(x, y, t.index));
         };
         eachCell(finder);
 
@@ -44,7 +44,7 @@ public class main : MonoBehaviour
         {
             for (var y = 0; y < size; y++)
             {
-                act(x, y, cells[new Vector2(x, y)]);
+                act(x, y, cells.ContainsKey(new Vector2(x, y)) ? cells[new Vector2(x, y)] : null);
             }
         }
 
@@ -56,23 +56,23 @@ public class Tile
     float x;
     float y;
     private int value;
-    public int Value
+    public int index
     {
-        get { return value; }
+        get { return index; }
         set { this.value = value; }
     }
     public Tile(int x, int y, int value)
     {
         this.x = x;
         this.y = y;
-        this.value = value;
+        this.index = value;
     }
 
     public Tile()
     {
         this.x = 0;
         this.y = 0;
-        this.value = 9;
+        this.index = 9;
     }
 
 }
