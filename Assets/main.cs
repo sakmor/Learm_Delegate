@@ -13,23 +13,11 @@ public class main : MonoBehaviour
     {
         size = 4;
         cells = new Dictionary<Vector2, Tile>();
-        cells.Add(new Vector2(0, 0), new Tile(0, 0, 0));
-        cells.Add(new Vector2(0, 1), new Tile(0, 1, 1));
         cells.Add(new Vector2(2, 2), new Tile(1, 2, 9)); // tile紀錄的座標與實際cells儲存位置不符，會被setCellsTileCorrect修正。
-        cells.Add(new Vector2(0, 3), new Tile(0, 3, 5));
-        cells.Add(new Vector2(1, 0), new Tile(1, 0, 5));
-        cells.Add(new Vector2(1, 1), new Tile(1, 1, 5));
-        cells.Add(new Vector2(1, 2), new Tile(1, 2, 6));
-
         List<Tile> availableCell = new List<Tile>(getAvailableCell());
-        // setCellsTileCorrect();
-
-
+        setCellsTileCorrect();
         List<Tile> occupyedCell = new List<Tile>(getOccupyedCell());
-
-
         foreach (var k in occupyedCell) Debug.Log(k + ": " + k.x + " " + k.y + " " + k.value);
-
     }
 
     // 更新tile紀錄的xy座標，使之與實際cells儲存位置相符
@@ -57,7 +45,7 @@ public class main : MonoBehaviour
 
         Action<int, int, Tile> finder = (x, y, t) =>
         {
-            if (t != null) cells.Add(new Tile(x, y, t.value));
+            if (t != null) cells.Add(t);
         };
 
         eachCell(finder);
