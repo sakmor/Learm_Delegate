@@ -5,102 +5,56 @@ using System;
 
 public class main : MonoBehaviour
 {
-    private int size;
-    Dictionary<Vector2, Tile> cells;
+    private int size = 4;
+
 
     // Use this for initialization
     void Start()
     {
-        size = 4;
-        cells = new Dictionary<Vector2, Tile>();
-        cells.Add(new Vector2(2, 2), new Tile(1, 2, 9)); // tile紀錄的座標與實際cells儲存位置不符，會被setCellsTileCorrect修正。
-        List<Tile> availableCell = new List<Tile>(getAvailableCell());
-        setCellsTileCorrect();
-        List<Tile> occupyedCell = new List<Tile>(getOccupyedCell());
-        foreach (var k in occupyedCell) Debug.Log(k + ": " + k.x + " " + k.y + " " + k.value);
+        Dictionary<Vector2, int> cells = createGrid(10);
+        printGrild(cells);
+
+
+
     }
-
-    // 更新tile紀錄的xy座標，使之與實際cells儲存位置相符
-    void setCellsTileCorrect()
-    {
-        Action<int, int, Tile> finder = (x, y, t) =>
-         {
-             if (t != null)
-             {
-                 if (x != t.x || y != t.y)
-                 {
-                     t.x = x;
-                     t.y = y;
-                 }
-             }
-         };
-
-        eachCell(finder);
-    }
-
-    // 回傳被佔據的座標清單
-    List<Tile> getOccupyedCell()
-    {
-        List<Tile> cells = new List<Tile>();
-
-        Action<int, int, Tile> finder = (x, y, t) =>
-        {
-            if (t != null) cells.Add(t);
-        };
-
-        eachCell(finder);
-        return cells;
-    }
-
-    // 回傳被空置的座標清單
-    List<Tile> getAvailableCell()
-    {
-        List<Tile> cells = new List<Tile>();
-
-        Action<int, int, Tile> finder = (x, y, t) =>
-        {
-            if (t == null) cells.Add(new Tile(x, y, -1));
-        };
-
-        eachCell(finder);
-        return cells;
-    }
-
-
-
     //對cells內所儲存的資料進行動作
     //傳入參數：Action<int, int, Tile>
-    void eachCell(Action<int, int, Tile> act)
+    void eachCell(Action<int, int, Dictionary<Vector2, int>> act, Dictionary<Vector2, int> dictionary)
     {
         for (var x = 0; x < size; x++)
         {
             for (var y = 0; y < size; y++)
             {
-                act(x, y, cells.ContainsKey(new Vector2(x, y)) ? cells[new Vector2(x, y)] : null);
+                act(x, y, dictionary);
             }
         }
 
     }
-}
-
-public class Tile
-{
-    public int x { get; set; }
-    public int y { get; set; }
-    public int value { get; set; }
-
-    public Tile(int x, int y, int value)
+    Dictionary<Vector2, int> createGrid(int s)
     {
-        this.x = x;
-        this.y = y;
-        this.value = value;
+        Dictionary<Vector2, int> temp = new Dictionary<Vector2, int>();
+        //宣告一個Action委派名為act ，該委派接收三個 int 參數 x y v
+        Action<int, int, Dictionary<Vector2, int>> act = (x, y, value) =>
+       {
+           Vector2 v2 = new Vector2(x, y);
+           temp.Add(v2, UnityEngine.Random.Range(0, s));
+       };
+
+        //將委派act 跟 字典 dictionary 傳送到 eachCell方法
+        eachCell(act, temp);
+        return temp;
+    }
+    void printGrild(Dictionary<Vector2, int> n)
+    {
+        Action<int, int, Dictionary<Vector2, int>> act = (x, y, value) =>
+        {
+            Vector2 v2 = new Vector2(x, y);
+            if (value.ContainsKey(v2)) Debug.Log(value[v2]);
+        };
+
+        eachCell(act, n);
     }
 
-    public Tile()
-    {
-        x = 0;
-        y = 0;
-        value = 9;
-    }
 
 }
+
